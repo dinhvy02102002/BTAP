@@ -225,7 +225,6 @@ INSERT INTO dependents(dependent_id,first_name,last_name,relationship,employee_i
 INSERT INTO dependents(dependent_id,first_name,last_name,relationship,employee_id) VALUES (29,'Alec','Partners','Child',146);
 INSERT INTO dependents(dependent_id,first_name,last_name,relationship,employee_id) VALUES (30,'Sandra','Taylor','Child',176);
 
-
 CREATE VIEW DEMO AS
     SELECT 
         region_name,
@@ -261,20 +260,21 @@ end;$$
 call pro_search_name('steven')
 
 -- câu 2: tạo một thủ tục có tên proc_Salary để xét thưởng cuối năm như sau 
--- nếu nhân viên làm trên: >= 9 thưởng lương 12tr
--- nếu làm trên 6 năm thưởng 8 tr
--- nếu làm trên 4 năm thưởng 6 tr 
+-- nếu nhân viên làm trên: >= 35 năm thưởng lương 20tr
+-- nếu làm trên 30 năm thưởng 15 tr
+-- nếu làm trên 25 năm thưởng 10 tr 
 -- còn lại thưởng 5 tr
 DELIMITER $$
 create procedure pro_salary ()
-begin
-	select employee_id,hire_date,TIMESTAMPDIFF(year,hire_date, now()) as year_work, salary,
-case
-	when TIMESTAMPDIFF(year,hire_date, now())>=9 then salary+12000
-    when TIMESTAMPDIFF(year,hire_date, now())>6 then salary+8000
-    when TIMESTAMPDIFF(year,hire_date, now())>4 then salary+6000
-    else salary+5000
-end as bonus
-from employees;
-end;$$
-call pro_salary
+BEGIN
+   select e.employee_id, e.first_name, e.last_name, e.hire_date,
+   case 
+   when datediff (now(), e.hire_date) >= 35*365 then e.salary + 20000000
+   when datediff (now(), e.hire_date) >= 30*365 then e.salary + 15000000
+   when datediff (now(), e.hire_date) >= 25*365 then e.salary + 10000000
+   else e.salary + 5000000
+   end as 'Thuong cuoi nam'
+   from employees as e;
+END; $$
+-- goi thu tuc
+call pro_Salary
