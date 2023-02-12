@@ -1,0 +1,30 @@
+-- câu 1: tạo một pro_Search_Name(Fistname)
+-- sau đó cho hiển thị toàn bộ thông tin của nhân viên đó
+-- trong đó nối Fullname Firstname+ Lastname
+DELIMITER $$
+create procedure pro_search_name (IN firstname varchar(20))
+begin
+	select employee_id,concat(first_name,' ',last_name) as fullname, email, phone_number, hire_date,
+	job_id,salary,manager_id,department_id from employees where first_name like concat('%',firstname,'%');
+end;$$
+
+call pro_search_name('lex')
+-- câu 2: tạo một thủ tục có tên proc_Salary để xét thưởng cuối năm như sau 
+-- nếu nhân viên làm trên: >= 35 năm thưởng lương 20tr
+-- nếu làm trên 30 năm thưởng 15 tr
+-- nếu làm trên 25 năm thưởng 10 tr 
+-- còn lại thưởng 5 tr
+DELIMITER $$
+create procedure pro_salary ()
+BEGIN
+   select e.employee_id, e.first_name, e.last_name, e.hire_date,
+   case 
+   when datediff (now(), e.hire_date) >= 35*365 then e.salary + 20000000
+   when datediff (now(), e.hire_date) >= 30*365 then e.salary + 15000000
+   when datediff (now(), e.hire_date) >= 25*365 then e.salary + 10000000
+   else e.salary + 5000000
+   end as 'Thuong cuoi nam'
+   from employees as e;
+END; $$
+-- goi thu tuc
+call pro_Salary
